@@ -79,11 +79,8 @@ pipeline{
         stage('Pushing artifactory into Jfrog '){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
                    withCredentials([usernamePassword(credentialsId: 'jfrog', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "jfrog rt u target/*.jar ${ARTIFACTORY_URL}/repository/path/to/artifact/ --user=${USERNAME} --password=${PASSWORD}"
-                   
-               }
             }
         }
         stage('Docker Image Build'){
