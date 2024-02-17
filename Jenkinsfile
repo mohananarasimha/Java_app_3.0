@@ -77,12 +77,13 @@ pipeline{
             }
         }
         stage('Deploy to Artifactory') {
-            steps {
-                // Upload the artifact to Artifactory using JFrog CLI and credentials binding
-                withCredentials([usernamePassword(credentialsId: 'your-credentials-id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh "jfrog rt u target/*.jar ${ARTIFACTORY_URL}/repository/path/to/artifact/ --user=${USERNAME} --password=${PASSWORD}"
+            when { expression {  params.action == 'create' } }
+                steps {
+                    // Upload the artifact to Artifactory using JFrog CLI and credentials binding
+                    withCredentials([usernamePassword(credentialsId: 'jfrog', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "jfrog rt u target/*.jar ${ARTIFACTORY_URL}/repository/path/to/artifact/ --user=${USERNAME} --password=${PASSWORD}"
+                    }
                 }
-            }
         }
         stage('Docker Image Build'){
          when { expression {  params.action == 'create' } }
