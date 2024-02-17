@@ -5,7 +5,7 @@ pipeline{
     agent any
     //agent { label 'Demo' }
      environment {
-        ARTIFACTORY_URL = 'https://<JFROG_ARTIFACTORY_URL>'
+        ARTIFACTORY_URL = 'https://http://34.215.34.59:8082'
     }
 
     parameters{
@@ -76,11 +76,12 @@ pipeline{
                }
             }
         }
-        stage('Pushing artifactory into Jfrog '){
-         when { expression {  params.action == 'create' } }
-            steps{
-                   withCredentials([usernamePassword(credentialsId: 'jfrog', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+        stage('Deploy to Artifactory') {
+            steps {
+                // Upload the artifact to Artifactory using JFrog CLI and credentials binding
+                withCredentials([usernamePassword(credentialsId: 'your-credentials-id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "jfrog rt u target/*.jar ${ARTIFACTORY_URL}/repository/path/to/artifact/ --user=${USERNAME} --password=${PASSWORD}"
+                }
             }
         }
         stage('Docker Image Build'){
